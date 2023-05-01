@@ -12,7 +12,7 @@ const queueURL = 'https://sqs.us-west-2.amazonaws.com/584607906861/ParkingSpots.
 const receiveMessages = async () => {
   // set up message params
   const params = {
-    QueueURL: queueURL,
+    QueueUrl: queueURL,
     MaxNumberOfMessages: 1,
   };
 
@@ -42,7 +42,7 @@ const receiveMessages = async () => {
 const deleteMessage = async (receiptHandle) => {
   // set up params for delete message
   const params = {
-    QueueURL: queueURL,
+    QueueUrl: queueURL,
     ReceiptHandle: receiptHandle,
   };
 
