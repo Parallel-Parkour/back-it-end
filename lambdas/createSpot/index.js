@@ -3,38 +3,50 @@
 const dynamoose = require('dynamoose');
 
 const SpotSchema = new dynamoose.Schema({
-  id: String,
-  price: Number, 
-  maxHours: Number, 
-  booked: Boolean,
+  id: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  maxHours: {
+    type: Number,
+    required: true,
+  },
+  booked: {
+    type: Boolean,
+    default: false,
+  },
   ownerId: {
-    'type': Number,
-    'default': null,
+    type: Number,
+    required: true,
   },
-  renterId: {
-    'type': Number,
-    'default': null,
-  },
+  renterId: Number,
 });
 
 const SpotModel = dynamoose.model('Spots', SpotSchema);
 
 exports.handler = async(event) =>{
-  console.log('EVENT ', event.body);
-  let spot = JSON.parse(event.body);
-  // console.log('READING SPOT', spot);
-  let returnSpot;
-  
-  try{
-    returnSpot = await SpotModel.create(spot);
-  }
-  catch(e){
-    console.error('ERROR: ', e);
-  }
+
+  const spot = JSON.parse(event.body);
 
   const response = {
-    statusCode: 200,
-    body: JSON.stringify(`HELLO FROM NEW SPOT, ${returnSpot}`),
+    statusCode: null,
+    body: null,
   };
+  
+  
+  if (spot) {
+    const newSpot = await SpotModel.create(spot);
+    response.body = JSON.stringify(newSpot);
+    response.statusCode = 200;
+  } else {
+    
+    response.body = JSON.stringify('Missing request body');
+    response.statusCode = 500;
+  }
+  
   return response;
 };

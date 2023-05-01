@@ -3,18 +3,27 @@
 const dynamoose = require('dynamoose');
 
 const SpotSchema = new dynamoose.Schema({
-  id: String,
-  price: Number, 
-  maxHours: Number, 
-  booked: Boolean,
+  id: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  maxHours: {
+    type: Number,
+    required: true,
+  },
+  booked: {
+    type: Boolean,
+    default: false,
+  },
   ownerId: {
-    'type': Number,
-    'default': null,
+    type: Number,
+    required: true,
   },
-  renterId: {
-    'type': Number,
-    'default': null,
-  },
+  renterId: Number,
 });
 
 const SpotModel = dynamoose.model('Spots', SpotSchema);
