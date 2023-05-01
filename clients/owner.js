@@ -38,3 +38,25 @@ const receiveMessages = async () => {
   }
 };
 
+// deleteMessage function for deleting a message from the SQS queue after it's been processed
+const deleteMessage = async (receiptHandle) => {
+  // set up params for delete message
+  const params = {
+    QueueURL: queueURL,
+    ReceiptHandle: receiptHandle,
+  };
+
+  try {
+    // call the deleteMessage methjod on the SQS instance to remove the message from the queue
+    await sqs.deleteMessage(params).promise();
+    // log a message confirming the message was deleted
+    console.log('Message deleted: ', receiptHandle);
+
+  } catch (err) {
+    // log any errors that occur while deleting the message
+    console.error('Error deleting message: ', err);
+  }
+};
+
+// call the receiveMessages function
+receiveMessages();
