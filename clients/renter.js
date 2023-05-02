@@ -1,7 +1,7 @@
 'use strict';
 
 const axios = require('axios');
-require('dotenv').config({path: `../.env`});
+require('dotenv').config();
 const prompt = require('prompt-sync')();
 const API = process.env.API_URL;
 const AWS = require('aws-sdk');
@@ -38,6 +38,7 @@ async function chooseSpot(){
 
 async function rentSpot(spot){
   console.log(spot);
+  let renter = spot.renterId;
   let b = spot.booked ? false : true;
   
   let newSpot = {
@@ -53,42 +54,64 @@ async function rentSpot(spot){
   };
 
   let r = await axios(config);
-
   //SNS notify owner that this spot has been rented
-  let message = b
-    ? `Spot with ID ${spot.id} has been rented.`
-    : `Renter has checked out from spot with ID ${spot.id}.`
-
-  await sns
-    .publish({
-      Message: message,
-      TopicArn: topicArn,
-    })
-    .promise()
-    .then((data) => {
-      console.log(`SNS message sent: ${data.MessageID}`);
-    })
-    .catch((err) => {
-      console.error(`Error sending SNS message: ${err}`);
-    });
-
-
+  sendSNS(r.data);
   if(b){
     console.log('Renting spot!');
   }
   else{
     console.log('Checking out!');
-    sendInvoice(r.data);
+    sendInvoice(r.data, renter);
   }
+  
   return r.data;
 }
 
-function sendInvoice(spot){
+function sendInvoice(spot, renter){
   //generate invoice based on hours * price per hour, prompt renter to pay
   let owed = spot.price*spot.maxHours;
-  console.log(`You spent ${spot.maxHours} at this spot with a rate of ${spot.price} per hour, your credit card has been charged $${owed}`);
+  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price} per hour, your credit card has been charged $${owed}`);
+  console.log(invoice);
 
   //send the invoice to the owner somehow
+  sendSNS(spot, `Copy of invoice: ${invoice}`);
+}
+
+async function sendSNS(spot, invoice){
+  if(invoice){
+    await sns
+      .publish({
+        Message: invoice,
+        TopicArn: topicArn,
+        MessageGroupId: '1',
+      })
+      .promise()
+      .then((data) => {
+        console.log(`SNS message sent: ${data}`);
+      })
+      .catch((err) => {
+        console.error(`Error sending SNS message: ${err}`);
+      });
+  }
+  else{
+    let message = spot.booked
+      ? `Spot with ID ${spot.id} has been rented.`
+      : `Renter has checked out from spot with ID ${spot.id}.`;
+
+    await sns
+      .publish({
+        Message: message,
+        TopicArn: topicArn,
+        MessageGroupId: '1',
+      })
+      .promise()
+      .then((data) => {
+        console.log(`SNS message sent: ${data}`);
+      })
+      .catch((err) => {
+        console.error(`Error sending SNS message: ${err}`);
+      });
+  }
 }
 
 async function main(){
@@ -97,17 +120,17 @@ async function main(){
   let spot = await chooseSpot();
   let s = await rentSpot(spot);
   console.log(s);
-
+  console.log(`Spot rented for ${s.maxHours} hours.`);
 
   //renter rents spot for the max hours available
-  setTimeout(() => {
-    console.log(`Spot rented for ${s.maxHours} hours.`);
-  }, 1000*s.maxHours);
+  setTimeout(async () => {
+    let x = await rentSpot(s);
+    console.log(x);
+  }, 2000*s.maxHours);
 
 
   //rental complete, use rentSpot() to change the spot to booked=false in order to finish rental
-  let x = await rentSpot(s);
-  console.log(x);
+  
 }
 
 main();
