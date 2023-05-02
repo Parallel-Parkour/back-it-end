@@ -1,9 +1,16 @@
 'use strict';
 
 const axios = require('axios');
-require('dotenv').config();
+require('dotenv').config({path: `../.env`});
 const prompt = require('prompt-sync')();
 const API = process.env.API_URL;
+const AWS = require('aws-sdk');
+
+// make a new instance of the SNS service with correct region/API version
+const sns = new AWS.SNS({ apiVersion: '2010-03-31', region: 'us-west-2'});
+
+// set the topic ARN from our AWS instance
+const topicArn = 'arn:aws:sns:us-west-2:584607906861:ParkingSpots.fifo';
 
 let config = {
   method: 'get',
@@ -46,7 +53,26 @@ async function rentSpot(spot){
   };
 
   let r = await axios(config);
+
   //SNS notify owner that this spot has been rented
+  let message = b
+    ? `Spot with ID ${spot.id} has been rented.`
+    : `Renter has checked out from spot with ID ${spot.id}.`
+
+  await sns
+    .publish({
+      Message: message,
+      TopicArn: topicArn,
+    })
+    .promise()
+    .then((data) => {
+      console.log(`SNS message sent: ${data.MessageID}`);
+    })
+    .catch((err) => {
+      console.error(`Error sending SNS message: ${err}`);
+    });
+
+
   if(b){
     console.log('Renting spot!');
   }
