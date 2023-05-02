@@ -37,7 +37,6 @@ async function createUser(email, username, password) {
   }
 }
 
-
 // user is prompted to enter their email and create a password
 let email = prompt('Enter your email: ');
 let username = prompt('Create a username: ');

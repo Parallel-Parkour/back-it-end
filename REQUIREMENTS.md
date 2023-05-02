@@ -27,7 +27,7 @@ The purpose of Back-It-End is to provide a simple, secure and convenient way to 
 
 #### Minimum Viable Product
 
-- Back-It-End will allow owner users to advertise the number of spots they have open, match them with renters seeking spots, and provide a an invoice to both parties after the renter has vacated the owner's spot.
+- Back-It-End will allow owner users to advertise the number of spots they have open, match them with renters seeking spots, and provide an invoice to both parties after the renter has vacated the owner's spot.
 
 ##### Stretch Goals
 
