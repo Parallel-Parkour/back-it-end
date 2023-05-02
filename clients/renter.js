@@ -2,6 +2,7 @@
 
 const axios = require('axios');
 require('dotenv').config();
+// CLI prompts
 const prompt = require('prompt-sync')();
 const API = process.env.API_URL;
 
