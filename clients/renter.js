@@ -11,12 +11,47 @@ let config = {
   url: '/spot',
 };
 
-let results = async () => {
+async function getEmptySpots() {
   let r = await axios(config);
   return r.data;
-};
+}
 
-results()
-  .then(r => console.log(r));
+async function chooseSpot(){
+  let spots = await getEmptySpots();
+  console.log(spots);
+  for (let i = 0; i < spots.length; i++) {
+    console.log(`${i}: Price: ${spots[i].price}, hours: ${spots[i].maxHours}`);
+  }
+  let chosenSpotId = prompt('Which spot do you want:  ');
+  let chosenSpot = spots[chosenSpotId];
+  console.log(`Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`);
+  return chosenSpot;
+    
+}
 
-//let chosenSpot = prompt('Which spot do you want (by id):  ');
+async function rentSpot(spot){
+  console.log(spot);
+  let newSpot = {
+    booked: true,
+    renterId: 1,
+  };
+
+  config = {
+    method: 'put',
+    baseURL: API,
+    url: `/spot/${spot.id}`,
+    data: JSON.stringify(newSpot),
+  };
+
+  let r = await axios(config);
+  //SNS notify
+  return r.data;
+}
+
+async function main(){
+  let spot = await chooseSpot();
+  let s = await rentSpot(spot);
+  console.log(s);
+}
+
+main();
