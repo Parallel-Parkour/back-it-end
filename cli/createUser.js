@@ -23,15 +23,15 @@ async function createUser(email, username, password) {
       // user is not req'd to verify email
       email_verified: false,
     });
-    // assign roles and permissions
-    management.assignRolestoUser({ id: user.user_id }, { roles: ['rol_fMzcYOYVZgf5Evw9'] }, function(e) {
-      if (e) {
-        console.log('Error assigning roles: ', e);
-        return;
-      }
-      console.log('Roles and permissions assigned successfully.');
-    });
-    console.log('User created: ', user.username);
+
+    // assign roles // this role id will specifically assign the role "renter" to the user
+    await management.assignRolestoUser({ id: user.user_id }, { roles: ['rol_fMzcYOYVZgf5Evw9'] });
+    
+    // get user roles
+    const userRoles = await management.getUserRoles({ id: user.user_id });
+
+    console.log('User created: ', user.username, userRoles);
+
   } catch (e) {
     console.error('Error creating user: ', e);
   }
