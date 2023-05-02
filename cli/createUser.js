@@ -9,29 +9,40 @@ const management = new ManagementClient({
   clientId: 'Q66Bi2Ilz8Nf2hpCaJhYnpwIKsos0DVm',
   clientSecret: 'oEjyQiG0haL1_r660iAiTFKIk3qv2xGk6q5rqfn-rz_ZFTM-S1TMxVbLtsp1r_T2',
   // grant_types: 'password',
-  scope: 'read:users create:users',
+  scope: 'read:users create:users read:roles update:users create:role_members',
 });
 
-
-async function createUser(email, password) {
+let user = '';
+async function createUser(email, username, password) {
   try {
-    const user = await management.createUser({
+    user = await management.createUser({
       connection: 'Username-Password-Authentication',
       email: email,
+      username: username,
       password: password,
       // user is not req'd to verify email
       email_verified: false,
     });
-    console.log('User created:', user.email);
+    // assign roles and permissions
+    management.assignRolestoUser({ id: user.user_id }, { roles: ['rol_fMzcYOYVZgf5Evw9'] }, function(e) {
+      if (e) {
+        console.log('Error assigning roles: ', e);
+        return;
+      }
+      console.log('Roles and permissions assigned successfully.');
+    });
+    console.log('User created: ', user.username);
   } catch (e) {
-    console.error('Error creating user:', e);
+    console.error('Error creating user: ', e);
   }
 }
 
 
-// user is prompeted to enter their email and create a password
-let username = prompt('Enter email as login: ');
+// user is prompted to enter their email and create a password
+let email = prompt('Enter your email: ');
+let username = prompt('Create a username: ');
 let password = prompt('Create a password: ');
+
 // user is created and stored in auth0
-createUser(username, password);
+createUser(email, username, password);
 
