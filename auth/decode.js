@@ -36,4 +36,5 @@ async function getInfo() {
     return false;
   }
 }
+
 console.log(getInfo());
