@@ -13,6 +13,21 @@ const authenticate = new AuthenticationClient({
 
 async function login(username, password) {
   try {
+    // await management.updateUserMetadata(createdUser.user_id, { roles: userRoles.map((role) => role.name) });
+
+    // const login = await management.getLoginUrl({
+    //   realm: 'Username-Password-Authentication',
+    //   redirect_uri: 'http://localhost:3000',
+    //   scope: 'openid profile email',
+    //   audience: 'https://myapi.com/',
+    //   // add custom claim to ID token
+    //   extraParams: {
+    //     id_token: {
+    //       'https://can-o-bookworms.netlify.app/roles': userRoles.map((role) => role.name),
+    //     },
+    //   },
+    // });
+
     const authResult = await authenticate.oauth.passwordGrant({
       username: username,
       password: password,

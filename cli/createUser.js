@@ -1,5 +1,6 @@
 // enable CLI prompts
 const prompt = require('prompt-sync')();
+
 const { ManagementClient } = require('auth0');
 
 // from auth0, used to manage users
@@ -12,10 +13,10 @@ const management = new ManagementClient({
   scope: 'read:users create:users read:roles update:users create:role_members',
 });
 
-let user = '';
 async function createUser(email, username, password) {
   try {
-    user = await management.createUser({
+    // create a new user
+    const createdUser = await management.createUser({
       connection: 'Username-Password-Authentication',
       email: email,
       username: username,
@@ -24,14 +25,27 @@ async function createUser(email, username, password) {
       email_verified: false,
     });
 
-    // assign roles // this role id will specifically assign the role "renter" to the user
-    await management.assignRolestoUser({ id: user.user_id }, { roles: ['rol_fMzcYOYVZgf5Evw9'] });
-    
+    // assign roles
+    await management.assignRolestoUser(
+      {id: createdUser.user_id},
+      {roles: ['rol_fMzcYOYVZgf5Evw9']},
+    );
+
     // get user roles
-    const userRoles = await management.getUserRoles({ id: user.user_id });
+    const userRoles = await management.getUserRoles({
+      id: createdUser.user_id,
+    });
 
-    console.log('User created: ', user.username, userRoles);
+    console.log('User created: ', createdUser.username, userRoles);
 
+    // // add role to token
+    // const token = await management.getTokenSilently();
+    // const namespace = 'https://can-o-bookworms.netlify.app/';
+    // const updatedToken = await management.updateAccessTokenClaims(token, {
+    //   [`${namespace}/roles`]: userRoles.map((role) => role.name),
+    // });
+
+    // console.log('Updated token:', updatedToken);
   } catch (e) {
     console.error('Error creating user: ', e);
   }
