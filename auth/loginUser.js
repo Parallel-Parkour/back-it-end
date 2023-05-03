@@ -21,15 +21,12 @@ async function login(username, password) {
       password: password,
     });
     
-    console.log('Access Token:', authResult.access_token);
-    console.log('ID Token:', authResult.id_token);
-
     return authResult;
   } catch (e) {
     console.log(e);
+    return e;
   }
 }
-
 
 module.exports = {
   login,

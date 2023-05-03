@@ -20,7 +20,6 @@ async function createUser(username, password) {
       connection: 'Username-Password-Authentication',
       email: username,
       password: password,
-      // user is not req'd to verify email
       email_verified: false,
     });
     console.log('User created:', user.email);
