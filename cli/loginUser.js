@@ -3,7 +3,6 @@ const prompt = require('prompt-sync')();
 const { AuthenticationClient } = require('auth0');
 
 // from auth0, authenticates users
-// does auth0 need Auth0 Authenticate API?
 const authenticate = new AuthenticationClient({
   domain: 'dev-clgtb4uqmlleu7uk.us.auth0.com',
   clientId: 'Q66Bi2Ilz8Nf2hpCaJhYnpwIKsos0DVm',
@@ -32,3 +31,4 @@ let user = prompt('Enter email to login: ');
 let pass = prompt('Enter password: ');
 
 login(user, pass);
+console.log('Login successful: ', user);
