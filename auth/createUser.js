@@ -25,7 +25,7 @@ async function createUser(username, password) {
     console.log('User created:', user.email);
     console.log('User id: ', user.user_id);
 
-    management.assignRolestoUser({ id: user.user_id }, { roles: ['rol_wNfHXovkBQTGaYx9'] }, function (err) {
+    management.assignRolestoUser({ id: user.user_id }, { roles: [process.env.AUTH0_RENTER_ID] }, function (err) {
       if (err) {
         console.log(err);
         return;
