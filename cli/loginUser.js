@@ -1,6 +1,7 @@
 // enable CLI prompts
 const prompt = require('prompt-sync')();
 const { AuthenticationClient } = require('auth0');
+// const { management } = require('./createUser.js');
 
 // from auth0, authenticates users
 const authenticate = new AuthenticationClient({
@@ -13,34 +14,27 @@ const authenticate = new AuthenticationClient({
 
 async function login(username, password) {
   try {
-    // await management.updateUserMetadata(createdUser.user_id, { roles: userRoles.map((role) => role.name) });
-
-    // const login = await management.getLoginUrl({
-    //   realm: 'Username-Password-Authentication',
-    //   redirect_uri: 'http://localhost:3000',
-    //   scope: 'openid profile email',
-    //   audience: 'https://myapi.com/',
-    //   // add custom claim to ID token
-    //   extraParams: {
-    //     id_token: {
-    //       'https://can-o-bookworms.netlify.app/roles': userRoles.map((role) => role.name),
-    //     },
-    //   },
-    // });
-
+    // authenticate user
     const authResult = await authenticate.oauth.passwordGrant({
       username: username,
       password: password,
-      // scope: 'openid email profile',
+      scope: 'openid profile email',
     });
 
+    // // get user roles
+    // const userRoles = await management.getUserRoles({
+    //   id: authResult.idTokenPayload.sub,
+    // });
+
+    // // add role to ID token
+    // const updatedIdToken = authenticate.tokens.add('https://can-o-bookworms.netlify.app/roles', userRoles.map((role) => role.name), authResult.id_token);
+
     console.log('Access Token:', authResult.access_token);
-    console.log('ID Token:', authResult.id_token);
+    // console.log('ID Token:', updatedIdToken);
   } catch (e) {
     console.log(e);
   }
 }
-
 
 let user = prompt('Enter email to login: ');
 let pass = prompt('Enter password: ');
