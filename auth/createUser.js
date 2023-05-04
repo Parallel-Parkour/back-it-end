@@ -36,7 +36,7 @@ async function createUser(username, password) {
       console.log(chalk.cyan('Roles and permissions assigned successfully.'));
     });
   } catch (e) {
-    console.log(chalk.bgRed('Error creating user: ', e));
+    console.error(chalk.bgRed('Error creating user: ', e));
     throw e;
   }
 }
