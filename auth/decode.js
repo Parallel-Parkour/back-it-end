@@ -36,7 +36,7 @@ async function getInfo() {
     // Return true if the signature is valid
     return true;
   } catch (error) {
-    console.error(chalk.bgred('Error verifying JWT:', error.message));
+    console.error(chalk.bgRed('Error verifying JWT:', error.message));
     return false;
   }
 }

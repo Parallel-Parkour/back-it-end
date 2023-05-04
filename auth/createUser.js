@@ -30,13 +30,13 @@ async function createUser(username, password) {
 
     management.assignRolestoUser({ id: user.user_id }, { roles: [process.env.AUTH0_RENTER_ID] }, function (err) {
       if (err) {
-        console.log(chalk.bgred(err));
+        console.log(chalk.bgRed(err));
         return;
       }
       console.log(chalk.cyan('Roles and permissions assigned successfully.'));
     });
   } catch (e) {
-    console.error(chalk.bgred('Error creating user: ', e));
+    console.error(chalk.bgRed('Error creating user: ', e));
     throw e;
   }
 }
