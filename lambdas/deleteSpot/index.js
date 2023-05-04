@@ -30,7 +30,7 @@ const SpotSchema = new dynamoose.Schema({
 const SpotModel = dynamoose.model('Spots', SpotSchema);
 
 exports.handler = async(event) =>{
-  console.log(chalk.bgyellow('DELETE PERSON EVENT ', event));
+  console.log(chalk.yellow('DELETE PERSON EVENT ', event));
   let params = event.pathParameters;
   let responseBody = null;
   // console.log('READING SPOT', spot);
