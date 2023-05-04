@@ -116,7 +116,7 @@ async function sendSNS(spot, invoice) {
         console.log(chalk.cyan('Owner was sent a copy of the invoice.'));
       })
       .catch((err) => {
-        console.error(chalk.bgred(`Error sending message to Owner: ${err}`));
+        console.error(chalk.bgRed(`Error sending message to Owner: ${err}`));
       });
   }
   else {
@@ -135,7 +135,7 @@ async function sendSNS(spot, invoice) {
         console.log(chalk.cyan('Owner was sent message:', message));
       })
       .catch((err) => {
-        console.error(chalk.bgred(`Error sending message to Owner: ${err}`));
+        console.error(chalk.bgRed(`Error sending message to Owner: ${err}`));
       });
   }
 }
