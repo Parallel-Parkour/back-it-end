@@ -7,6 +7,7 @@ require('dotenv').config({ path: '../.env' });
 const prompt = require('prompt-sync')();
 const API = process.env.API_URL;
 const AWS = require('aws-sdk');
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
 
 const { login } = require('../auth/loginUser');
 
