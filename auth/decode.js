@@ -22,6 +22,7 @@ async function getInfo() {
   try {
     const decodedToken = await jwt.decode(info.id_token, { complete: true });
     const { header } = decodedToken;
+    console.log(decodedToken);
 
     // Get the public key for the token's signature
     const key = await jwks.getSigningKey(header.kid);
@@ -37,3 +38,5 @@ async function getInfo() {
     return false;
   }
 }
+
+getInfo();
