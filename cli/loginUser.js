@@ -1,7 +1,6 @@
 // enable CLI prompts
 const prompt = require('prompt-sync')();
 const { AuthenticationClient } = require('auth0');
-// const { management } = require('./createUser.js');
 
 // from auth0, authenticates users
 const authenticate = new AuthenticationClient({
@@ -21,16 +20,7 @@ async function login(username, password) {
       scope: 'openid profile email',
     });
 
-    // // get user roles
-    // const userRoles = await management.getUserRoles({
-    //   id: authResult.idTokenPayload.sub,
-    // });
-
-    // // add role to ID token
-    // const updatedIdToken = authenticate.tokens.add('https://can-o-bookworms.netlify.app/roles', userRoles.map((role) => role.name), authResult.id_token);
-
     console.log('Access Token:', authResult.access_token);
-    // console.log('ID Token:', updatedIdToken);
   } catch (e) {
     console.log(e);
   }
@@ -39,5 +29,7 @@ async function login(username, password) {
 let user = prompt('Enter email to login: ');
 let pass = prompt('Enter password: ');
 
-login(user, pass);
+// login(user, pass);
 console.log('Login successful: ', user);
+
+module.exports = { login, user, pass };

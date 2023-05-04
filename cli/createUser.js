@@ -35,10 +35,10 @@ async function createUser(email, username, password) {
 
     console.log('User created: ', createdUser.username, userRoles);
 
-    // // add role to user metadata
-    // await management.updateUserMetadata(createdUser.user_id, {
-    //   roles: userRoles.map((role) => role.name),
-    // });
+    // add role to user metadata
+    await management.updateUserMetadata({ id: createdUser.user_id }, {
+      roles: userRoles.map((role) => role.name),
+    });
 
     return { createdUser, userRoles };
   } catch (e) {
@@ -55,4 +55,4 @@ let password = prompt('Create a password: ');
 // user is created and stored in auth0
 createUser(email, username, password);
 
-// module.exports = { createUser, management };
+module.exports = { createUser, management, email, username, password };
