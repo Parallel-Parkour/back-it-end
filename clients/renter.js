@@ -33,10 +33,11 @@ async function getEmptySpots() {
 }
 
 async function chooseSpot() {
+  console.log(chalk.cyan('Retrieving parking spots around your area...'));
   let spots = await getEmptySpots();
-  console.log(chalk.cyan('All Available Spots'));
+  console.log(chalk.cyan('All Available Parking Spots'));
   for (let i = 0; i < spots.length; i++) {
-    console.log(chalk.blue.bold(`${i}: Price: $${spots[i].price}.00/hr, Parking Time: ${spots[i].maxHours}hr`));
+    console.log(chalk.blue.bold(`\t ${i}: Price: $${spots[i].price}.00/hr, Parking Time: ${spots[i].maxHours}hr`));
   }
 
   //ensure that user is picking a valid spot.
@@ -53,12 +54,11 @@ async function chooseSpot() {
   }
 
   let chosenSpot = spots[chosenSpotId];
-  console.log(chalk.blue.bold(`Spot ID ${chosenSpot.id} chosen - Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`));
+  console.log(chalk.blue.bold(`Spot ID ${chosenSpot.id} chosen - Price: $${chosenSpot.price}.00/hr, Parking Time: ${chosenSpot.maxHours}hr`));
   return chosenSpot;
 }
 
 async function rentSpot(spot) {
-  console.log(chalk.yellow.italic(spot));
   let renter = spot.renterId;
   let b = spot.booked ? false : true;
 
@@ -95,7 +95,7 @@ async function rentSpot(spot) {
 function sendInvoice(spot, renter) {
   //generate invoice based on hours * price per hour, prompt renter to pay
   let owed = spot.price * spot.maxHours;
-  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price}.00/hr. Your credit card has been charged $${owed}.00`);
+  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price}.00/hr. Your credit card has been charged $${owed}.00.`);
   console.log(chalk.blue.bold(invoice));
 
   //send the invoice to the owner somehow
@@ -141,12 +141,14 @@ async function sendSNS(spot, invoice) {
 
 //Initialize renter CLI and run prompts.
 async function main() {
+  console.log(chalk.yellow.italic('Welcome to Back-It-End!'));
   //Continue prompting for login until valid credentials are supplied.
   let loginprompt = false;
   while (!loginprompt) {
     let user = prompt(chalk.green.bold('Enter email to login: '));
     let pass = prompt(chalk.green.bold('Enter password: '));
     token = await login(user, pass);
+    console.log(chalk.cyan('Login successful!'));
     if (token.statusCode === 403) {
       console.log('Invalid login credentials, please try again.');
     } else {
@@ -159,7 +161,7 @@ async function main() {
   let s = await rentSpot(spot);
 
   console.log(chalk.cyan(`Spot rented for ${s.maxHours} hours.`));
-
+  console.log(chalk.cyan('[User is parking...]'));
 
   //renter rents spot for the max hours available
   setTimeout(async () => {
