@@ -38,6 +38,7 @@ Back-It-End will allow Owner users to advertise the number of spots they have op
 
 * Inegtrate method to take payments.
 
+
 ## Functional Requirements
 
 * Owner users can create spots to notify renter users of availability.
@@ -59,4 +60,3 @@ Back-It-End will allow Owner users to advertise the number of spots they have op
 ## Non-Functional Requirements
 
 * Spots will be occupied for only one hour duration, subject to change following proof of life / MVP.
-

@@ -1,5 +1,6 @@
 'use strict';
 
+const chalk = require('chalk');
 const dynamoose = require('dynamoose');
 
 const SpotSchema = new dynamoose.Schema({
@@ -29,7 +30,7 @@ const SpotSchema = new dynamoose.Schema({
 const SpotModel = dynamoose.model('Spots', SpotSchema);
 
 exports.handler = async(event) =>{
-  console.log('EVENT ', event.body);
+  console.log(chalk.cyan('EVENT ', event.body));
   let params = event.pathParameters;
   let responseBody = null;
   // console.log('READING SPOT', spot);

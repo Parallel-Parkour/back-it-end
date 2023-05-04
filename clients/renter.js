@@ -1,5 +1,6 @@
 'use strict';
 
+const chalk = require('chalk');
 const axios = require('axios');
 require('dotenv').config({ path: '../.env' });
 // CLI prompts
@@ -23,8 +24,8 @@ async function getEmptySpots() {
     baseURL: API,
     url: '/spot',
     headers: {
-      Authorization: `Bearer ${token.id_token}`
-    }
+      Authorization: `Bearer ${token.id_token}`,
+    },
   };
   
   let r = await axios(config);
@@ -33,19 +34,19 @@ async function getEmptySpots() {
 
 async function chooseSpot() {
   let spots = await getEmptySpots();
-  console.log(spots);
+  console.log(chalk.cyan(spots));
   for (let i = 0; i < spots.length; i++) {
-    console.log(`${i}: Price: ${spots[i].price}, hours: ${spots[i].maxHours}`);
+    console.log(chalk.blue.bold(`${i}: Price: ${spots[i].price}, hours: ${spots[i].maxHours}`));
   }
-  let chosenSpotId = prompt('Which spot do you want:  ');
+  let chosenSpotId = prompt(chalk.green.bold('Choose your spot:  '));
   let chosenSpot = spots[chosenSpotId];
-  console.log(`Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`);
+  console.log(chalk.blue.bold(`Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`));
   return chosenSpot;
 
 }
 
 async function rentSpot(spot) {
-  console.log(spot);
+  console.log(chalk.yellow.italic(spot));
   let renter = spot.renterId;
   let b = spot.booked ? false : true;
 
@@ -54,15 +55,14 @@ async function rentSpot(spot) {
     renterId: 1,
   };
 
-  let config = {
+  const config = {
     method: 'put',
     baseURL: API,
     url: `/spot/${spot.id}`,
     data: JSON.stringify(newSpot),
     headers: {
-      Authorization: `Bearer ${token.id_token}`
-    }
-
+      Authorization: `Bearer ${token.id_token}`,
+    },
 
   };
 
@@ -70,10 +70,10 @@ async function rentSpot(spot) {
   //SNS notify owner that this spot has been rented
   sendSNS(r.data);
   if (b) {
-    console.log('Renting spot!');
+    console.log(chalk.magenta('Renting spot!'));
   }
   else {
-    console.log('Checking out!');
+    console.log(chalk.magenta('Checking out!'));
     sendInvoice(r.data, renter);
   }
 
@@ -84,7 +84,8 @@ function sendInvoice(spot, renter) {
   //generate invoice based on hours * price per hour, prompt renter to pay
   let owed = spot.price * spot.maxHours;
   let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price} per hour, your credit card has been charged $${owed}`);
-  console.log(invoice);
+
+  console.log(chalk.blue.bold(invoice));
 
   //send the invoice to the owner somehow
   sendSNS(spot, `Copy of invoice: ${invoice}`);
@@ -100,10 +101,10 @@ async function sendSNS(spot, invoice) {
       })
       .promise()
       .then((data) => {
-        console.log(`SNS message sent: ${data}`);
+        console.log(chalk.cyan(`SNS message sent: ${data}`));
       })
       .catch((err) => {
-        console.error(`Error sending SNS message: ${err}`);
+        console.error(chalk.bgred(`Error sending SNS message: ${err}`));
       });
   }
   else {
@@ -119,29 +120,32 @@ async function sendSNS(spot, invoice) {
       })
       .promise()
       .then((data) => {
-        console.log(`SNS message sent: ${data}`);
+        console.log(chalk.cyan(`SNS message sent: ${data}`));
       })
       .catch((err) => {
-        console.error(`Error sending SNS message: ${err}`);
+        console.error(chalk.bgred(`Error sending SNS message: ${err}`));
       });
   }
 }
 
 async function main() {
-  let user = prompt('Enter email to login: ');
-  let pass = prompt('Enter password: ');
+  let user = prompt(chalk.green.bold('Enter email to login: '));
+  let pass = prompt(chalk.green.bold('Enter password: '));
+
   token = await login(user, pass);
 
   console.log(token);
   //renter chooses spot to rent
   let spot = await chooseSpot();
   let s = await rentSpot(spot);
-  console.log(`Spot rented for ${s.maxHours} hours.`);
+
+  console.log(chalk.cyan(`Spot rented for ${s.maxHours} hours.`));
+
 
   //renter rents spot for the max hours available
   setTimeout(async () => {
     let x = await rentSpot(s);
-    console.log(x);
+    console.log(chalk.yellow.italic(x));
   }, 2000 * s.maxHours);
 
 

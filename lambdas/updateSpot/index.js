@@ -1,5 +1,6 @@
 'use strict';
 
+const chalk = require('chalk');
 const dynamoose = require('dynamoose');
 
 const SpotSchema = new dynamoose.Schema({
@@ -29,7 +30,7 @@ const SpotSchema = new dynamoose.Schema({
 const SpotModel = dynamoose.model('Spots', SpotSchema);
 
 exports.handler = async(event) =>{
-  console.log('UPDATE EVENT ', event.body);
+  console.log(chalk.bgyellow('UPDATE EVENT ', event.body));
   let params = event.pathParameters;
   let body = JSON.parse(event.body);
   let responseBody = null;
