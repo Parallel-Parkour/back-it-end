@@ -19,7 +19,7 @@ const app = Consumer.create({
       console.log(chalk.yellow.italic(data.Message));
     }
     catch (e){
-      console.log(chalk.bgred(e));
+      console.log(chalk.bgRed(e));
     }
   },
 });

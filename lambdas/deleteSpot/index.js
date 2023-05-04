@@ -39,7 +39,7 @@ exports.handler = async(event) =>{
     console.log(chalk.cyan('Deleted ', deleted));
     responseBody = { message: 'Item successfully deleted.'};
   } catch (e) {
-    console.log(chalk.bgred(e));
+    console.log(chalk.bgRed(e));
   }
 
   const response = {
