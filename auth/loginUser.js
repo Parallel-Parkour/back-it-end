@@ -26,7 +26,6 @@ async function login(username, password) {
     
     return authResult;
   } catch (e) {
-    console.log(chalk.bgred(e));
     return e;
   }
 }
