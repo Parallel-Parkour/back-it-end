@@ -5,7 +5,7 @@ const prompt = require('prompt-sync')();
 const chalk = require('chalk');
 
 const { ManagementClient } = require('auth0');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 
 // from auth0, used to manage users
 const management = new ManagementClient({

@@ -1,7 +1,7 @@
 'use strict';
 
 const createUser = require('./createUser.js');
-const chalk = require('chalk');
+require('dotenv').config({path: '../.env'});
 
 // prompts must be commented out on createUser.js before tests will run
 describe('Testing the createUser function', () => {
