@@ -23,8 +23,8 @@ async function getEmptySpots() {
     baseURL: API,
     url: '/spot',
     headers: {
-      Authorization: `Bearer ${token.id_token}`
-    }
+      Authorization: `Bearer ${token.id_token}`,
+    },
   };
   
   let r = await axios(config);
@@ -33,19 +33,30 @@ async function getEmptySpots() {
 
 async function chooseSpot() {
   let spots = await getEmptySpots();
-  console.log(spots);
+  console.log('All Available Spots');
   for (let i = 0; i < spots.length; i++) {
-    console.log(`${i}: Price: ${spots[i].price}, hours: ${spots[i].maxHours}`);
+    console.log(`${i}: Price: $${spots[i].price}.00/hr, Parking Time: ${spots[i].maxHours}hr`);
   }
-  let chosenSpotId = prompt('Which spot do you want:  ');
-  let chosenSpot = spots[chosenSpotId];
-  console.log(`Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`);
-  return chosenSpot;
 
+  //ensure that user is picking a valid spot.
+  let spotPicked = false;
+  let chosenSpotId = null;
+  while (!spotPicked) {
+    chosenSpotId = prompt('Which spot do you want: ');
+    let idAsInt = parseInt(chosenSpotId);
+    if (!isNaN(idAsInt) && idAsInt < spots.length && idAsInt > -1) {
+      spotPicked = true;
+    } else {
+      console.log('Please pick a valid parking spot.');
+    }
+  }
+
+  let chosenSpot = spots[chosenSpotId];
+  console.log(`Spot ID ${chosenSpot.id} chosen - Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`);
+  return chosenSpot;
 }
 
 async function rentSpot(spot) {
-  console.log(spot);
   let renter = spot.renterId;
   let b = spot.booked ? false : true;
 
@@ -54,14 +65,14 @@ async function rentSpot(spot) {
     renterId: 1,
   };
 
-  config = {
+  let config = {
     method: 'put',
     baseURL: API,
     url: `/spot/${spot.id}`,
     data: JSON.stringify(newSpot),
     headers: {
-      Authorization: `Bearer ${token.id_token}`
-    }
+      Authorization: `Bearer ${token.id_token}`,
+    },
 
   };
 
@@ -69,7 +80,7 @@ async function rentSpot(spot) {
   //SNS notify owner that this spot has been rented
   sendSNS(r.data);
   if (b) {
-    console.log('Renting spot!');
+    console.log(`You are now parked!`);
   }
   else {
     console.log('Checking out!');
@@ -82,7 +93,7 @@ async function rentSpot(spot) {
 function sendInvoice(spot, renter) {
   //generate invoice based on hours * price per hour, prompt renter to pay
   let owed = spot.price * spot.maxHours;
-  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price} per hour, your credit card has been charged $${owed}`);
+  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price}.00/hr. Your credit card has been charged $${owed}.00`);
   console.log(invoice);
 
   //send the invoice to the owner somehow
@@ -99,10 +110,10 @@ async function sendSNS(spot, invoice) {
       })
       .promise()
       .then((data) => {
-        console.log(`SNS message sent: ${data}`);
+        console.log('Owner was sent a copy of the invoice.');
       })
       .catch((err) => {
-        console.error(`Error sending SNS message: ${err}`);
+        console.error(`Error sending message to Owner: ${err}`);
       });
   }
   else {
@@ -118,20 +129,30 @@ async function sendSNS(spot, invoice) {
       })
       .promise()
       .then((data) => {
-        console.log(`SNS message sent: ${data}`);
+        console.log('Owner was sent message:', message);
       })
       .catch((err) => {
-        console.error(`Error sending SNS message: ${err}`);
+        console.error(`Error sending message to Owner: ${err}`);
       });
   }
 }
 
+//Initialize renter CLI and run prompts.
 async function main() {
-  let user = prompt('Enter email to login: ');
-  let pass = prompt('Enter password: ');
-  token = await login(user, pass);
 
-  console.log(token);
+  //Continue prompting for login until valid credentials are supplied.
+  let loginprompt = false;
+  while (!loginprompt) {
+    let user = prompt('Enter email to login: ');
+    let pass = prompt('Enter password: ');
+    token = await login(user, pass);
+    if (token.statusCode === 403) {
+      console.log('Invalid login credentials, please try again.');
+    } else {
+      loginprompt = true;
+    }
+  }
+
   //renter chooses spot to rent
   let spot = await chooseSpot();
   let s = await rentSpot(spot);
@@ -140,12 +161,8 @@ async function main() {
   //renter rents spot for the max hours available
   setTimeout(async () => {
     let x = await rentSpot(s);
-    console.log(x);
+    console.log('Thank you for using Back-It-End!');
   }, 2000 * s.maxHours);
-
-
-  //rental complete, use rentSpot() to change the spot to booked=false in order to finish rental
-
 }
 
 main();

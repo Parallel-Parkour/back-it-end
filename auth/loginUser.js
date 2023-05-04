@@ -23,7 +23,6 @@ async function login(username, password) {
     
     return authResult;
   } catch (e) {
-    console.log(e);
     return e;
   }
 }
