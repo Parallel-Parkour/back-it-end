@@ -166,7 +166,7 @@ async function main() {
 
   //renter rents spot for the max hours available
   setTimeout(async () => {
-    let x = await rentSpot(s);
+    await rentSpot(s);
     console.log(chalk.yellow.italic('Thank you for using Back-It-End!'));
   }, 2000 * s.maxHours);
 }

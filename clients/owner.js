@@ -29,7 +29,7 @@ async function main() {
   let user = prompt('Enter owner email to login: ');
   let pass = prompt('Enter password: ');
   
-  let token = await login(user, pass);
+  await login(user, pass);
   console.log(chalk.cyan('Retrieving all notifications:'));
   
   app.start();
