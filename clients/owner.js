@@ -3,6 +3,7 @@
 const chalk = require('chalk');
 const { Consumer } = require('sqs-consumer'); 
 const AWS = require('aws-sdk');
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
 AWS.config.update({ region: 'us-west-2' });
 const { login, prompt } = require('../auth/loginUser');
 
@@ -15,7 +16,7 @@ const app = Consumer.create({
   handleMessage: async (message) => {
     try{
       let data = JSON.parse(message.Body);
-      console.log(chalk.yellow.italic(data));
+      console.log(chalk.yellow.italic(data.Message));
     }
     catch (e){
       console.log(chalk.bgred(e));
@@ -28,6 +29,7 @@ async function main() {
   let pass = prompt('Enter password: ');
   
   let token = await login(user, pass);
+  console.log(chalk.cyan('Retrieving all notifications:'));
   
   app.start();
 }
