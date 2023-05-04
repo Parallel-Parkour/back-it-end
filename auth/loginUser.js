@@ -5,7 +5,7 @@ const prompt = require('prompt-sync')();
 const chalk = require('chalk');
 
 const { AuthenticationClient } = require('auth0');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 
 // from auth0, authenticates users
 // does auth0 need Auth0 Authenticate API?

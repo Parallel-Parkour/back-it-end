@@ -41,9 +41,11 @@ async function createUser(username, password) {
   }
 }
 
-// user is prompeted to enter their email and create a password
-let username = prompt(chalk.green.bold('Enter username as login: '));
-let password = prompt(chalk.green.bold('Create a password: '));
+// // user is prompeted to enter their email and create a password
+// let username = prompt(chalk.green.bold('Enter username as login: '));
+// let password = prompt(chalk.green.bold('Create a password: '));
 
-// user is created and stored in auth0
-createUser(username, password);
+// // user is created and stored in auth0
+// createUser(username, password);
+
+module.exports = createUser;
