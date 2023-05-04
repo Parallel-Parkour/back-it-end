@@ -54,7 +54,7 @@ async function rentSpot(spot) {
     renterId: 1,
   };
 
-  config = {
+  let config = {
     method: 'put',
     baseURL: API,
     url: `/spot/${spot.id}`,
