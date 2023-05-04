@@ -30,7 +30,7 @@ async function createUser(username, password) {
         console.log(err);
         return;
       }
-      console.log("Roles and permissions assigned successfully");
+      console.log(chalk.cyan('Roles and permissions assigned successfully'));
     });
   } catch (e) {
     console.error('Error creating user:', e);
