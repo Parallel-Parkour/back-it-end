@@ -1,4 +1,5 @@
 'use strict';
+const chalk = require('chalk');
 
 const dynamoose = require('dynamoose');
 
@@ -29,16 +30,16 @@ const SpotSchema = new dynamoose.Schema({
 const SpotModel = dynamoose.model('Spots', SpotSchema);
 
 exports.handler = async(event) =>{
-  console.log('DELETE PERSON EVENT ', event);
+  console.log(chalk.bgyellow('DELETE PERSON EVENT ', event));
   let params = event.pathParameters;
   let responseBody = null;
   // console.log('READING SPOT', spot);
   try {
     let deleted = await SpotModel.delete(params.id);
-    console.log(deleted);
+    console.log(chalk.cyan('Deleted ', deleted));
     responseBody = { message: 'Item successfully deleted.'};
   } catch (e) {
-    console.log(e);
+    console.log(chalk.bgred(e));
   }
 
   const response = {
