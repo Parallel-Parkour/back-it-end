@@ -63,6 +63,7 @@ async function rentSpot(spot) {
       Authorization: `Bearer ${token.id_token}`
     }
 
+
   };
 
   let r = await axios(config);
