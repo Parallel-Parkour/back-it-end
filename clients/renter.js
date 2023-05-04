@@ -34,15 +34,27 @@ async function getEmptySpots() {
 
 async function chooseSpot() {
   let spots = await getEmptySpots();
-  console.log(chalk.cyan(spots));
+  console.log(chalk.cyan('All Available Spots'));
   for (let i = 0; i < spots.length; i++) {
-    console.log(chalk.blue.bold(`${i}: Price: ${spots[i].price}, hours: ${spots[i].maxHours}`));
+    console.log(chalk.blue.bold(`${i}: Price: $${spots[i].price}.00/hr, Parking Time: ${spots[i].maxHours}hr`));
   }
-  let chosenSpotId = prompt(chalk.green.bold('Choose your spot:  '));
-  let chosenSpot = spots[chosenSpotId];
-  console.log(chalk.blue.bold(`Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`));
-  return chosenSpot;
 
+  //ensure that user is picking a valid spot.
+  let spotPicked = false;
+  let chosenSpotId = null;
+  while (!spotPicked) {
+    chosenSpotId = prompt(chalk.green.bold('Which spot do you want: '));
+    let idAsInt = parseInt(chosenSpotId);
+    if (!isNaN(idAsInt) && idAsInt < spots.length && idAsInt > -1) {
+      spotPicked = true;
+    } else {
+      console.log('Please pick a valid parking spot.');
+    }
+  }
+
+  let chosenSpot = spots[chosenSpotId];
+  console.log(chalk.blue.bold(`Spot ID ${chosenSpot.id} chosen - Price: ${chosenSpot.price}, hours: ${chosenSpot.maxHours}`));
+  return chosenSpot;
 }
 
 async function rentSpot(spot) {
@@ -55,7 +67,7 @@ async function rentSpot(spot) {
     renterId: 1,
   };
 
-  const config = {
+  let config = {
     method: 'put',
     baseURL: API,
     url: `/spot/${spot.id}`,
@@ -70,7 +82,7 @@ async function rentSpot(spot) {
   //SNS notify owner that this spot has been rented
   sendSNS(r.data);
   if (b) {
-    console.log(chalk.magenta('Renting spot!'));
+    console.log(chalk.magenta(`You are now parked!`));
   }
   else {
     console.log(chalk.magenta('Checking out!'));
@@ -83,8 +95,7 @@ async function rentSpot(spot) {
 function sendInvoice(spot, renter) {
   //generate invoice based on hours * price per hour, prompt renter to pay
   let owed = spot.price * spot.maxHours;
-  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price} per hour, your credit card has been charged $${owed}`);
-
+  let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price}.00/hr. Your credit card has been charged $${owed}.00`);
   console.log(chalk.blue.bold(invoice));
 
   //send the invoice to the owner somehow
@@ -101,10 +112,10 @@ async function sendSNS(spot, invoice) {
       })
       .promise()
       .then((data) => {
-        console.log(chalk.cyan(`SNS message sent: ${data}`));
+        console.log(chalk.cyan('Owner was sent a copy of the invoice.'));
       })
       .catch((err) => {
-        console.error(chalk.bgred(`Error sending SNS message: ${err}`));
+        console.error(chalk.bgred(`Error sending message to Owner: ${err}`));
       });
   }
   else {
@@ -120,21 +131,29 @@ async function sendSNS(spot, invoice) {
       })
       .promise()
       .then((data) => {
-        console.log(chalk.cyan(`SNS message sent: ${data}`));
+        console.log(chalk.cyan('Owner was sent message:', message));
       })
       .catch((err) => {
-        console.error(chalk.bgred(`Error sending SNS message: ${err}`));
+        console.error(chalk.bgred(`Error sending message to Owner: ${err}`));
       });
   }
 }
 
+//Initialize renter CLI and run prompts.
 async function main() {
-  let user = prompt(chalk.green.bold('Enter email to login: '));
-  let pass = prompt(chalk.green.bold('Enter password: '));
+  //Continue prompting for login until valid credentials are supplied.
+  let loginprompt = false;
+  while (!loginprompt) {
+    let user = prompt(chalk.green.bold('Enter email to login: '));
+    let pass = prompt(chalk.green.bold('Enter password: '));
+    token = await login(user, pass);
+    if (token.statusCode === 403) {
+      console.log('Invalid login credentials, please try again.');
+    } else {
+      loginprompt = true;
+    }
+  }
 
-  token = await login(user, pass);
-
-  console.log(token);
   //renter chooses spot to rent
   let spot = await chooseSpot();
   let s = await rentSpot(spot);
@@ -145,12 +164,8 @@ async function main() {
   //renter rents spot for the max hours available
   setTimeout(async () => {
     let x = await rentSpot(s);
-    console.log(chalk.yellow.italic(x));
+    console.log(chalk.yellow.italic('Thank you for using Back-It-End!'));
   }, 2000 * s.maxHours);
-
-
-  //rental complete, use rentSpot() to change the spot to booked=false in order to finish rental
-
 }
 
 main();
