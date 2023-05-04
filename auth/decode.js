@@ -15,8 +15,8 @@ require('dotenv').config({ path: '../.env' });
 
 
 async function getInfo() {
-  let user = prompt('Enter email to login: ');
-  let pass = prompt('Enter password: ');
+  let user = prompt(chalk.green.bold('Enter email to login: '));
+  let pass = prompt(chalk.green.bold('Enter password: '));
 
   const info = await login(user, pass);
 
