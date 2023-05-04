@@ -47,3 +47,5 @@ let password = prompt(chalk.green.bold('Create a password: '));
 
 // user is created and stored in auth0
 createUser(username, password);
+
+module.exports = { createUser };
