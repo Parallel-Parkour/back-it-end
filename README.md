@@ -24,6 +24,7 @@ This includes setting environment variables for the DynamoDB connection, JWT sec
 - Go to your AWS account and create a database with DynamoDB, you will use the ARN from this in your CRUD lambda functions
 - Go to API Gateway. Make a restful api with the following routes:  
 
+```
 /  
   /spot  
     GET  
@@ -33,6 +34,7 @@ This includes setting environment variables for the DynamoDB connection, JWT sec
       DELETE  
       GET  
       PUT  
+```
       
 - You will need to go to Lambda now and create 5 functions and point the routes in API Gateway to use those functions for the CRUD requests, as well as a 5th function as an authorizer that checks the token and sees if the user is permitted to use that route. You will use this gateway ARN in your .env
 - You will also need to create a FIFO SNS and a FIFO SQS where the SQS is subscribed to the SNS, you will use those in your .env
