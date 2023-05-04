@@ -15,7 +15,7 @@ const { login } = require('../auth/loginUser');
 const sns = new AWS.SNS({ apiVersion: '2010-03-31', region: 'us-west-2' });
 
 // set the topic ARN from our AWS instance
-const topicArn = 'arn:aws:sns:us-west-2:584607906861:ParkingSpots.fifo';
+const topicArn = process.env.SNS_ARN;
 
 let token;
 
