@@ -2,8 +2,6 @@
 
 // enable CLI prompts
 const prompt = require('prompt-sync')();
-const chalk = require('chalk');
-
 const { ManagementClient } = require('auth0');
 require('dotenv').config({ path: '../.env' });
 
@@ -18,32 +16,31 @@ const management = new ManagementClient({
 
 async function createUser(username, password) {
   try {
-    // create a new user
     const user = await management.createUser({
       connection: 'Username-Password-Authentication',
-      username: username,
+      email: username,
       password: password,
       email_verified: false,
     });
-    console.log(chalk.magenta('User created:', user.username));
-    console.log(chalk.magenta('User id: ', user.user_id));
+    console.log('User created:', user.email);
+    console.log('User id: ', user.user_id);
 
     management.assignRolestoUser({ id: user.user_id }, { roles: [process.env.AUTH0_RENTER_ID] }, function (err) {
       if (err) {
-        console.log(chalk.bgred(err));
+        console.log(err);
         return;
       }
-      console.log(chalk.cyan('Roles and permissions assigned successfully.'));
+      console.log("Roles and permissions assigned successfully");
     });
   } catch (e) {
-    console.error(chalk.bgred('Error creating user: ', e));
-    throw e;
+    console.error('Error creating user:', e);
   }
 }
 
 // user is prompeted to enter their email and create a password
-let username = prompt(chalk.green.bold('Enter username as login: '));
-let password = prompt(chalk.green.bold('Create a password: '));
-
+let username = prompt('Enter username as login: ');
+let password = prompt('Create a password: ');
 // user is created and stored in auth0
+
 createUser(username, password);
+

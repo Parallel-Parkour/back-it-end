@@ -1,5 +1,7 @@
 'use strict';
 
+const chalk = require('chalk');
+
 const { login, prompt } = require('./loginUser');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
@@ -14,8 +16,9 @@ require('dotenv').config({ path: '../.env' });
 
 
 async function getInfo() {
-  let user = prompt('Enter email to login: ');
-  let pass = prompt('Enter password: ');
+  let user = prompt(chalk.green.bold('Enter email to login: '));
+  let pass = prompt(chalk.green.bold('Enter password: '));
+
 
   const info = await login(user, pass);
 
@@ -33,7 +36,9 @@ async function getInfo() {
     // Return true if the signature is valid
     return true;
   } catch (error) {
-    console.error('Error verifying JWT:', error.message);
+    console.error(chalk.bgred('Error verifying JWT:', error.message));
     return false;
   }
 }
+
+getInfo();

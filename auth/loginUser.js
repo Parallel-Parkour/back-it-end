@@ -2,11 +2,14 @@
 
 // enable CLI prompts
 const prompt = require('prompt-sync')();
+const chalk = require('chalk');
+
 const { AuthenticationClient } = require('auth0');
 require('dotenv').config({ path: '../.env' });
 
 // from auth0, authenticates users
 // does auth0 need Auth0 Authenticate API?
+
 const authenticate = new AuthenticationClient({
   domain: process.env.AUTH0_DOMAIN,
   clientId: process.env.AUTH0_CLIENTID,
@@ -29,5 +32,5 @@ async function login(username, password) {
 
 module.exports = {
   login,
-  prompt
-}
+  prompt,
+};
