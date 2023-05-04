@@ -1,5 +1,6 @@
 'use strict';
 
+require('dotenv').config();
 const { login } = require('./loginUser');
 
 describe('Testing login function', () => {
