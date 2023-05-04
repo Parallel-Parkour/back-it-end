@@ -1,6 +1,7 @@
 'use strict';
 
 const chalk = require('chalk');
+
 const { login, prompt } = require('./loginUser');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
@@ -17,6 +18,7 @@ require('dotenv').config({ path: '../.env' });
 async function getInfo() {
   let user = prompt(chalk.green.bold('Enter email to login: '));
   let pass = prompt(chalk.green.bold('Enter password: '));
+
 
   const info = await login(user, pass);
 
@@ -38,3 +40,5 @@ async function getInfo() {
     return false;
   }
 }
+
+getInfo();

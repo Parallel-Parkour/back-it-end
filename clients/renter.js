@@ -84,6 +84,7 @@ function sendInvoice(spot, renter) {
   //generate invoice based on hours * price per hour, prompt renter to pay
   let owed = spot.price * spot.maxHours;
   let invoice = (`You spent ${spot.maxHours} hours at this spot with a rate of $${spot.price} per hour, your credit card has been charged $${owed}`);
+
   console.log(chalk.blue.bold(invoice));
 
   //send the invoice to the owner somehow
@@ -130,13 +131,16 @@ async function sendSNS(spot, invoice) {
 async function main() {
   let user = prompt(chalk.green.bold('Enter email to login: '));
   let pass = prompt(chalk.green.bold('Enter password: '));
+
   token = await login(user, pass);
 
   console.log(token);
   //renter chooses spot to rent
   let spot = await chooseSpot();
   let s = await rentSpot(spot);
+
   console.log(chalk.cyan(`Spot rented for ${s.maxHours} hours.`));
+
 
   //renter rents spot for the max hours available
   setTimeout(async () => {
