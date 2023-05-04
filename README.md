@@ -5,5 +5,3 @@
 * Jonathan Tsai
 * Kyle Freemantle
 * Laurel Perkins
-
-## Back-it-End
