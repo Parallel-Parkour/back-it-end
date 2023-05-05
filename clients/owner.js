@@ -10,7 +10,7 @@ AWS.config.update({ region: 'us-west-2' });
 const { login } = require('../auth/loginUser');
 
 // ParkingSpots.fifo queue URL
-const queueURL = 'https://sqs.us-west-2.amazonaws.com/584607906861/ParkingSpots.fifo';
+const queueURL = process.env.SQS_URI;
 
 const app = Consumer.create({
   region: 'us-west-2',
@@ -27,11 +27,19 @@ const app = Consumer.create({
 });
 
 async function main() {
-  let user = prompt('Enter owner email to login: ');
-  let pass = prompt('Enter password: ');
+  let loginprompt = false;
+  while (!loginprompt) {
+    let user = prompt('Enter owner email to login: ');
+    let pass = prompt('Enter password: ');
   
-  await login(user, pass);
-  console.log(chalk.cyan('Retrieving all notifications:'));
+    let token = await login(user, pass);
+    if (token.statusCode === 403) {
+      console.log('Invalid login credentials, please try again.');
+    } else {
+      console.log(chalk.cyan('Your notifications:'));
+      loginprompt = true;
+    }
+  }
   
   app.start();
 }
