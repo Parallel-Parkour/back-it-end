@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').config({path:'../.env'});
+require('dotenv').config();
 const chalk = require('chalk');
 const { Consumer } = require('sqs-consumer'); 
 const AWS = require('aws-sdk');

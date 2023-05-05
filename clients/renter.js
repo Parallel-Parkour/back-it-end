@@ -2,7 +2,7 @@
 
 const chalk = require('chalk');
 const axios = require('axios');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 // CLI prompts
 const prompt = require('prompt-sync')();
 const API = process.env.API_URL;
